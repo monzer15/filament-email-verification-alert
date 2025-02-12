@@ -137,7 +137,7 @@ public function panel(Panel $panel): Panel
                 ->closable(true)
                 ->placeholder(true)
                 ->renderHookName('panels::body.start')
-                ->renderHookScopes(['list', 'form'])
+                ->renderHookScopes([ListUsers::class])
                 ->lazy(false)
                 ->verifyUsing(function($user) {
                  // Custom verification logic
