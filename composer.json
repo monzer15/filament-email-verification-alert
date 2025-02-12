@@ -1,15 +1,16 @@
 {
     "name": "monzer/filament-email-verification-alert",
     "description": "Send Email verifications on the fly!",
+    "version": "1.0.0",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Monzer Osman",
-            "email": "59767837+monzer15@users.noreply.github.com"
+            "email": "monzerosman15@gmail.com",
+            "role": "Developer"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "filament/support": "^3.0"
     },
@@ -24,5 +25,7 @@
                 "Monzer\\FilamentEmailVerificationAlert\\EmailVerificationAlertServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
 }
