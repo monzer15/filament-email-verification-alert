@@ -8,6 +8,16 @@ A Filament plugin that adds an email verification alert to your admin panel. Thi
 - 🌐 RTL support
 - ⚡ Lazy loading support
 - 💪 Customizable verification handling
+- 🔒 Session-based alert persistence
+- ✖️ Optional close button
+- 🔄 Configurable loading placeholder
+
+
+## Screenshots
+
+![Alert with Yellow Theme](art/yellow.png)
+![Alert with Blue Theme](art/blue.png)
+![Alert with Red Theme](art/red.png)
 
 ## Installation
 
@@ -49,43 +59,61 @@ Creates a new instance of the plugin.
 ```
 Sets the color theme for the alert. Defaults to 'yellow'.
 
+### Alert Persistence
+
+```php
+->persistClosedState() // Alert will stay hidden after being closed until the session ends
+```
+
+By default, the alert will reappear if the page is refreshed after closing. Using `persistClosedState()` makes the closed state persist throughout the user's session.
+
+### Alert Visibility Controls
+
+#### Closable Button
+
+```php
+->closable(false) // Removes the close button, making the alert persistent
+```
+
+By default, the alert shows a close button. You can disable it to make the alert persistent.
+
+#### Placeholder Loading State
+
+```php
+->placeholder(false) // Disables the loading placeholder
+```
+
+Control the visibility of the loading placeholder during lazy loading.
+
 ### Verification Handler
 
 ```php
 ->verifyUsing(function($user) {
     // Custom verification logic
     $user->notify(new CustomVerificationNotification());
+    
+     Notification::make()
+     ->title(trans('filament-email-verification-alert::messages.verification.success'))
+     ->success()
+     ->send();
 })
 ```
 Customizes how verification emails are sent.
 
 ### Position Customization
 
+By default the `panels::topbar.start` hook is used to render the alert. But you can use any of the [Render Hooks](https://filamentphp.com/docs/3.x/support/render-hooks) available in Filament using the `renderHook()` method as:
+
 ```php
 ->renderHookName('panels::body.start')
 ```
-Changes where the alert appears. Default is 'panels::topbar.start'.
-
-Available positions:
-- `panels::topbar.start`
-- `panels::topbar.end`
-- `panels::body.start`
-- `panels::body.end`
-- `panels::footer.before`
-- `panels::footer.after`
 
 ### Scoping
 
 ```php
-->renderHookScopes(['list', 'form'])
+->renderHookScopes([ListUsers::class])
 ```
 Limits where the alert appears. By default, shows on all pages.
-
-Available scopes:
-- `'list'` - Resource list pages
-- `'form'` - Resource form pages
-- `'table'` - Table pages
-- `'widget'` - Widget pages
 
 ### Lazy Loading
 
@@ -105,12 +133,20 @@ public function panel(Panel $panel): Panel
         ->plugins([
             EmailVerificationAlertPlugin::make()
                 ->color('blue')
+                ->persistClosedState()
+                ->closable(true)
+                ->placeholder(true)
                 ->renderHookName('panels::body.start')
                 ->renderHookScopes(['list', 'form'])
                 ->lazy(false)
                 ->verifyUsing(function($user) {
-                    // Custom verification logic
-                    $user->notify(new CustomVerificationNotification());
+                 // Custom verification logic
+                  $user->notify(new CustomVerificationNotification());
+    
+                  Notification::make()
+                  ->title(trans('filament-email-verification-alert::messages.verification.success'))
+                  ->success()
+                  ->send();
                 }),
         ]);
 }
@@ -123,30 +159,11 @@ All methods return the plugin instance, allowing for method chaining:
 ```php
 EmailVerificationAlertPlugin::make()
     ->color('blue')
+    ->persistClosedState()
+    ->closable(true)
+    ->placeholder(true)
     ->lazy(false)
     ->renderHookName('panels::body.start');
-```
-
-### Translations
-
-The package includes English and Arabic translations. You can publish and customize them:
-
-```bash
-php artisan vendor:publish --tag="filament-email-verification-alert-translations"
-```
-
-Available translation keys:
-```php
-return [
-    'not_verified' => 'Your email address is not verified.',
-    'resend_link' => 'Click here to resend verification email',
-    'sending' => 'Sending...',
-    'close' => 'Close notification',
-    'verification' => [
-        'success' => 'A new verification link has been sent to your email address.',
-        'failed' => 'Failed to send verification email. Please try again.',
-    ]
-];
 ```
 
 ## License
